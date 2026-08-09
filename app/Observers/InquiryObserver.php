@@ -18,6 +18,13 @@ class InquiryObserver
 {
     public function created(Inquiry $inquiry): void
     {
+        // Still saved and visible in the admin — just not emailed, so an
+        // obvious agency pitch (see ContactController::looksLikeSpam) doesn't
+        // land in the inbox that only wants genuine enquiries.
+        if ($inquiry->status === 'spam') {
+            return;
+        }
+
         $recipient = MailSettings::notificationRecipient();
 
         if (! $recipient) {

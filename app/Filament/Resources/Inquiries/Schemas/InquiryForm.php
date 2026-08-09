@@ -14,7 +14,7 @@ class InquiryForm
         return $schema
             ->components([
                 Select::make('status')
-                    ->options(['new' => 'New', 'contacted' => 'Contacted', 'closed' => 'Closed'])
+                    ->options(['new' => 'New', 'contacted' => 'Contacted', 'closed' => 'Closed', 'spam' => 'Spam'])
                     ->default('new')
                     ->required(),
                 Select::make('kind')

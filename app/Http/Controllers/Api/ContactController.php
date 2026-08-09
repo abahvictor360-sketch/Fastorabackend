@@ -9,6 +9,45 @@ use Illuminate\Support\Facades\Validator;
 
 class ContactController extends Controller
 {
+    /**
+     * Phrases from the outbound-agency-pitch template ("we can assist you
+     * with...", "check out our portfolio") rather than anything a business
+     * would write about its own project — the direction is what tells the
+     * two apart, not general words like "website" or "SEO" that a genuine
+     * enquiry uses just as often.
+     */
+    private const SPAM_PHRASES = [
+        'we can assist you',
+        'we can help you with your',
+        'we specialize in',
+        'we offer the following services',
+        'we provide the following services',
+        'interested in our proposal',
+        'kindly get back to us',
+        'follow up on my previous email',
+        'following up on my previous email',
+        'quick response either way',
+        'check out our portfolio',
+        'increase your website traffic',
+        'boost your online presence',
+        'grow your business with our',
+        'affordable web design',
+    ];
+
+    /** True if the brief reads like an unsolicited agency pitch rather than an enquiry. */
+    private function looksLikeSpam(string $brief): bool
+    {
+        $haystack = strtolower($brief);
+
+        foreach (self::SPAM_PHRASES as $phrase) {
+            if (str_contains($haystack, $phrase)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public function store(Request $request)
     {
         // Honeypot — real users never fill this hidden field.
@@ -42,7 +81,7 @@ class ContactController extends Controller
         $data = $validator->validated();
 
         Inquiry::create([
-            'status' => 'new',
+            'status' => $this->looksLikeSpam($data['brief']) ? 'spam' : 'new',
             'kind' => $data['kind'] ?? 'general',
             'name' => $data['name'],
             'email' => $data['email'],
