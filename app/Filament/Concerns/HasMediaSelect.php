@@ -86,8 +86,11 @@ trait HasMediaSelect
                 ->url()
                 ->requiredWithout('file')
                 ->helperText("We'll download and store a copy, so the image keeps working even if the original goes away."),
+            // Required for the same reason as the media resource's own form:
+            // a blank one silently ships alt="" to the live site.
             TextInput::make('alt')
                 ->label('Alt text')
+                ->required()
                 ->helperText('What the image shows, for screen readers and search engines.'),
         ];
     }

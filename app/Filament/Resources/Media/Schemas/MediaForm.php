@@ -26,8 +26,12 @@ class MediaForm
                     ->requiredWithout('path')
                     ->helperText("We'll download and store a copy, so the image keeps working even if the original goes away.")
                     ->columnSpanFull(),
+                // Required: an image saved without it renders alt="" on the
+                // live site, which is invisible in the admin but shows up as an
+                // accessibility failure in a search engine's site scan.
                 TextInput::make('alt')
                     ->label('Alt text')
+                    ->required()
                     ->helperText('Describe the image for accessibility and SEO.')
                     ->columnSpanFull(),
                 Hidden::make('disk')->default('public'),
