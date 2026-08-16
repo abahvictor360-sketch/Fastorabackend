@@ -33,7 +33,16 @@ return [
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app/private'),
-            'serve' => true,
+            // Laravel's default of true makes FilesystemServiceProvider register
+            // a GET storage/{path} route that serves this private disk. Nothing
+            // here uses it: every Storage::disk() call in the app names the
+            // public disk, and no code builds a storage.local URL. It was also
+            // actively in the way — that route is registered at boot, so it
+            // took precedence over the missing-media fallback in web.php and
+            // answered 403 instead. Switching it off leaves the disk fully
+            // usable for reading and writing; it only stops it being exposed
+            // over HTTP, which was never wanted.
+            'serve' => false,
             'throw' => false,
             'report' => false,
         ],

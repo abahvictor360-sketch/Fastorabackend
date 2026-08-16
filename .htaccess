@@ -25,6 +25,18 @@
     # unrecognised the whole rule is skipped, leaving media 404ing. [L] is
     # universally supported, and the guard above plus the /storage/ exclusion
     # on the catch-all below make the restart it causes harmless.
+    # A missing media file goes to the app instead of 404ing at the web server.
+    # storage/app/public is gitignored, so a deploy that did not run
+    # app:sync-media leaves it bare and every image on the site breaks at once.
+    # The route this reaches restores the bundled original from
+    # database/seeders/images, which is tracked and therefore always present.
+    #
+    # Deliberately placed before the rule below rather than folded into it as a
+    # condition: when the file is there this never matches, so the working path
+    # keeps serving statically and is not touched by this addition.
+    RewriteCond %{DOCUMENT_ROOT}/storage/app/public/$1 !-f
+    RewriteRule ^storage/(?!app/public/)(.*)$ public/index.php [L]
+
     RewriteRule ^storage/(?!app/public/)(.*)$ storage/app/public/$1 [L]
 
     # Everything else is a Laravel route, so hand it to public/index.php.
