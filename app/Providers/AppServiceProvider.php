@@ -10,6 +10,7 @@ use App\Models\Page;
 use App\Models\Post;
 use App\Models\Service;
 use App\Models\SiteSetting;
+use App\Models\TeamMember;
 use App\Notifications\FastoraResetPassword;
 use App\Observers\CaseStudyObserver;
 use App\Observers\InquiryObserver;
@@ -17,6 +18,7 @@ use App\Observers\PageObserver;
 use App\Observers\PostObserver;
 use App\Observers\ServiceObserver;
 use App\Observers\SiteWideSettingsObserver;
+use App\Observers\TeamMemberObserver;
 use App\Support\MailSettings;
 use Filament\Auth\Notifications\ResetPassword;
 use Filament\Forms\Components\RichEditor;
@@ -50,6 +52,7 @@ class AppServiceProvider extends ServiceProvider
         NavHeader::observe(SiteWideSettingsObserver::class);
         NavFooter::observe(SiteWideSettingsObserver::class);
         Inquiry::observe(InquiryObserver::class);
+        TeamMember::observe(TeamMemberObserver::class);
 
         MailSettings::apply();
 

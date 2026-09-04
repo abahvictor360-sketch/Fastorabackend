@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\NewsletterController;
 use App\Http\Controllers\Api\PageController;
 use App\Http\Controllers\Api\PostController;
 use App\Http\Controllers\Api\ServiceController;
+use App\Http\Controllers\Api\TeamMemberController;
 use App\Http\Controllers\Api\SiteSettingsController;
 use App\Http\Controllers\Api\TestimonialController;
 use Illuminate\Support\Facades\Route;
@@ -30,6 +31,10 @@ Route::get('/posts', [PostController::class, 'index']);
 Route::get('/posts/{slug}', [PostController::class, 'show']);
 
 Route::get('/testimonials', [TestimonialController::class, 'index']);
+
+// The people with a profile page of their own, at fastora.africa/<slug>.
+Route::get('/team-members', [TeamMemberController::class, 'index']);
+Route::get('/team-members/{slug}', [TeamMemberController::class, 'show']);
 
 Route::get('/pages', [PageController::class, 'index']);
 Route::get('/pages/slugs', [PageController::class, 'slugs']);
