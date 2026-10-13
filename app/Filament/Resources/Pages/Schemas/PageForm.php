@@ -235,6 +235,10 @@ class PageForm
                                                     Textarea::make('bio')->rows(3),
                                                     static::mediaPicker('photo', 'Photo')
                                                         ->helperText('Optional. Shows as initials until a photo is uploaded.'),
+                                                    TextInput::make('profilePath')
+                                                        ->label('Profile link')
+                                                        ->placeholder('/genesis')
+                                                        ->helperText('Optional. Leave empty and the card links to the Team profile with the same name, if there is one. Set it when the two differ — Emmanuel is introduced here by his full name but his page is /genesis.'),
                                                 ])
                                                 ->columns(2)
                                                 ->addActionLabel('Add team member')
