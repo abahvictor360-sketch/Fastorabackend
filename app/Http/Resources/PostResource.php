@@ -20,6 +20,7 @@ class PostResource extends JsonResource
             'content' => $this->content,
             'readingTimeMinutes' => $this->readingTimeMinutes(),
             'featured' => (bool) $this->featured,
+            'showJournalNote' => (bool) $this->show_journal_note,
             'tags' => collect($this->tags ?? [])->pluck('tag')->values(),
             'categories' => $this->whenLoaded(
                 'categories',

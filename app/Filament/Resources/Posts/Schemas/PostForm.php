@@ -73,6 +73,11 @@ class PostForm
                                 ->label('Pin to top of Insights')
                                 ->helperText('Only one pinned post is shown. If more than one is toggled on, the most recently published wins.')
                                 ->columnSpanFull(),
+                            Toggle::make('show_journal_note')
+                                ->label('Show the Journal note')
+                                ->default(true)
+                                ->helperText("Prints \"This article is part of Fastora's Journal…\" under the article, with links to the Journal and to Contact. On for Journal pieces, which is most of them; turn it off for anything that is not part of the Journal.")
+                                ->columnSpanFull(),
                             ...static::seoFields(),
                         ])
                         ->columns(2),
