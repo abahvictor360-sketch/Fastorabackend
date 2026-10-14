@@ -82,14 +82,21 @@ class ApiCache
         }
     }
 
-    public static function put(string $key, mixed $value): void
+    /**
+     * $ttlSeconds shortens this one entry's life. Invalidation here is by
+     * editor action, which covers everything an editor does — but not content
+     * that becomes visible on its own, with nobody saving anything. A caller
+     * that knows when that happens next passes it in, so the entry expires then
+     * instead of outliving the event by up to a day.
+     */
+    public static function put(string $key, mixed $value, ?int $ttlSeconds = null): void
     {
         if (! config('api-cache.enabled', true)) {
             return;
         }
 
         try {
-            Cache::put(self::versionedKey($key), $value, self::TTL_SECONDS);
+            Cache::put(self::versionedKey($key), $value, min($ttlSeconds ?? self::TTL_SECONDS, self::TTL_SECONDS));
         } catch (Throwable $e) {
             report($e);
         }

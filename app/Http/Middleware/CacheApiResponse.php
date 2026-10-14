@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Post;
 use App\Support\ApiCache;
 use Closure;
 use Illuminate\Http\Request;
@@ -48,12 +49,41 @@ class CacheApiResponse
                 'content' => $response->getContent(),
                 'status' => $status,
                 'content_type' => $response->headers->get('Content-Type', 'application/json'),
-            ]);
+            ], $this->secondsUntilNextScheduledPost());
         }
 
         $response->headers->set('X-Api-Cache', 'miss');
 
         return $response;
+    }
+
+    /**
+     * How long until the next scheduled post goes live, or null when none is
+     * waiting.
+     *
+     * A scheduled post publishes itself: Post::published() counts it the moment
+     * its time passes, with nothing saved and no job run. That makes it the one
+     * change this cache cannot hear about, and the symptom was a post staying
+     * invisible long after its publish time — for up to the full day-long TTL,
+     * until an unrelated edit happened to flush everything.
+     *
+     * Capping the TTL at that moment means the entry expires exactly when the
+     * answer changes. One cheap query, and only when writing an entry.
+     */
+    private function secondsUntilNextScheduledPost(): ?int
+    {
+        $next = Post::query()
+            ->where('status', 'scheduled')
+            ->where('published_at', '>', now())
+            ->min('published_at');
+
+        if (! $next) {
+            return null;
+        }
+
+        // At least a second: a zero TTL means "forget immediately" on some
+        // stores and "never expire" on others, and neither is what we want.
+        return max(1, now()->diffInSeconds($next, false));
     }
 
     /**
